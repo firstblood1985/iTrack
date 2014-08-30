@@ -9,4 +9,18 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-ITrack::Application.config.secret_key_base = '20de2bd68b7f465e2412f9278264ecb64cb6bf56c2f5f2d36d00f2e0826055298663e501597cfa9829beb15fd8efadecf13a14fbc52a99e7db011e858a40ac4a'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+ITrack::Application.config.secret_key_base = secure_token
