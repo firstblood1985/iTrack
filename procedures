@@ -2,3 +2,25 @@ rails new iTrack --skip-test-unit
 bundle install --without production
 bundle update
 bundle install
+
+rails generate controller StaticPages home help --no-test-framework 
+(Rails 提供了一个脚本用来创建控制器，叫做generate，只要提供控制器的名字就可以运行了。既然我们要创建的控制器是处理静态页面的，那就叫它 StaticPages 吧。我们计划要生成处理“首页”，“帮助”页面和“关于”页面的动作。generate命令可以接受一个可选的参数，指定要生成的动作，现在我们只提供两个动作)
+--no-test-framework 选项禁止生成 RSpec 测试代码，因为我们不想自动生成
+
+关于生成和撤销操作
+rails generate controller FooBars baz quux
+rails destroy  controller FooBars baz quux
+
+ rails generate model Foo bar:string baz:integer
+ rails destroy model Foo
+
+ rake db:migrate
+ rake db:rollback
+
+回滚到最初状态
+ rake db:migrate VERSION=0
+
+ RSpec: request spec
+
+rails generate integration_test static_pages
+bundle exec rspec spec/requests/static_pages_spec.rb
