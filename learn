@@ -1,0 +1,10 @@
+去掉 bundle exec
+使用rvm
+
+使用Guard做自动化测试
+Guard 会监视文件系统的变动，假如你修改了 static_pages_spec.rb，那么只有这个文件中的测试会被运行。而且，我们可以适当的设置 Guard，当 home.html.erb 被修改后，也会自动运行 static_pages_spec.rb。
+
+使用Spork加速测试
+运行 bundle exec rspec 时你或许已经察觉到了，在开始运行测试之前有好几秒的停顿时间，一旦测试开始就会很快完成。这是因为每次 RSpec 运行测试时都要重新加载整个Rails环境。Spork测试服务器11可以解决这个问题。Spork只加载一次环境，然后会为后续的测试维护一个进程池。Spork 结合 Guard（参见 3.6.2 节）使用就更强大了。
+
+每一个page对应一个helper.rb，可以对该page添加函数并调用
