@@ -43,3 +43,39 @@ bundle exec rake db:migrate
 rails generate migration add_password_digest_to_users password_digest:string
 
 let 方法的参数是一个 Symbol，后面可以跟着一个块，块中代码的返回值会赋给名为 Symbol 代表的局部变量
+
+默认情况下，所有帮助方法文件中定义的方法都可以直接用在任意的视图中，不过为了便于管理，我们会把 gravatar_for 放在 Users 控制器对应的帮助文件中
+
+重置数据库：
+bundle exec rake db:reset
+
+重置测试数据库：
+bundle exec rake test:prepare
+
+pluralize 方法的第一个参数是整数，返回值是这个数字和第二个参数文本组合在一起正确的单复数形式。pluralize 方法是由功能强大的转置器（inflector）实现的，转置器知道怎么处理大多数单词的单复数变换，甚至是一些不规则的变换方式
+
+session 是两台电脑（例如运行有网页浏览器的客户端电脑和运行 Rails 的服务器）之间的半永久性连接，我们就是利用它来实现“登录”这一功能的。网络中常见的 session 处理方式有好几种：可以在用户关闭浏览器后清除 session；也可以提供一个“记住我”单选框让用户选择永远保存，直到用户退出后 session 才会失效
+
+而 Sessions 资源是利用 cookie 来存储数据的。cookie 是存储在浏览器中的简单文本
+实现登录功能基本上就是在实现基于 cookie 的验证机制
+
+rails generate controller Sessions --no-test-framework
+rails generate integration_test authentication_pages
+
+注意，设置退出路由那行使用了 via: 'delete'，这个参数指明 destroy 动作要使用 DELETE 请求。
+
+
+form_for(@user): Rails 会自动向 /users 地址发送 POST 请求
+
+我们则要明确的指定资源的名称以及相应的 URL 地址：form_for(:session, url: sessions_path)
+默认情况下帮助函数只可以在视图中使用，不能在控制器中使用，而我们需要同时在控制器和视图中使用帮助函数，所以我们就手动引入帮助函数所在的模块。
+
+rails generate migration add_remember_token_to_users
+bundle exec rake db:migrate
+bundle exec rake test:prepare
+
+Ruby 标准库中 SecureRandom 模块提供的 urlsafe_base64 方法可以满足我们的要求。3SecureRandom.urlsafe_base64 创建的字符串长度为 16，由 A-Z、a-z、0-9、下划线（_）和连字符（-）组成（每一位字符都有 64 种可能的情况，所以叫做“base64”）.所以两个记忆权标相等的概率就是 1/6416 = 2-96 ≈ 10-29，完全可以忽略。
+
+its 方法，它和 it 很像，不过测试对象是参数中指定的属性而不是整个测试的对象
+
+Active Record 是把模型的属性和数据库表中的列对应的，如果不指定 self 的话，我们就只是创建了一个名为 remember_token 的局部变量而已，这可不是我们期望得到的结果。加上 self 之后，赋值操作就会把值赋值给用户的 remember_token 属性，保存用户时，随着其他的属性一起存入数据库。
