@@ -79,3 +79,20 @@ Ruby 标准库中 SecureRandom 模块提供的 urlsafe_base64 方法可以满足
 its 方法，它和 it 很像，不过测试对象是参数中指定的属性而不是整个测试的对象
 
 Active Record 是把模型的属性和数据库表中的列对应的，如果不指定 self 的话，我们就只是创建了一个名为 remember_token 的局部变量而已，这可不是我们期望得到的结果。加上 self 之后，赋值操作就会把值赋值给用户的 remember_token 属性，保存用户时，随着其他的属性一起存入数据库。
+
+因为浏览器本身并不支持发送 PATCH 请求（表格 7.1中列出的 REST 动作要用），所以 Rails 就在 POST 请求中使用这个隐藏字段伪造了一个 PATCH 请求。3
+还有一个细节需要注意一下，代码 9.3 和代码 7.17 都使用了相同的 form_for(@user) 来构建表单，那么 Rails 是怎么知道创建新用户要发送 POST 请求，而编辑用户时要发送 PATCH 请求的呢？这个问题的答案是，通过 Active Record 提供的 new_record? 方法可以检测用户是新创建的还是已经存在于数据库中的：
+
+既然 correct_user 事前过滤器中已经定义了 @user，这两个动作中就不再需要再定义 @user 变量了。
+
+
+除了 patch 方法之外，Rails 中的测试还支持 get、post 和 delete 方法，只有http 基本方法才能返回response
+
+$ bundle exec rake db:reset
+$ bundle exec rake db:populate
+$ bundle exec rake test:prepare
+
+before(:all)，在所有测试之前跑
+before(:each),在每个测试之前跑
+
+it { should be_admin } 这行代码说明用户对象应该可以响应 admin? 方法（这是 RSpec 对布尔值属性的一个约定）。

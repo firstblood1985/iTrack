@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
 		if user && user.authenticate(params[:session][:password])
 			flash[:success]="Welcome back to iTrack, #{user.name}"
 			sign_in user
-			redirect_to user
+			redirect_back_or user
 		else
 			flash.now[:error] = "Invalid email/password"
 			render 'new'
