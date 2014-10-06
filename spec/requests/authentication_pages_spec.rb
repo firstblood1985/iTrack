@@ -9,7 +9,7 @@ describe "AuthenticationPages" do
       let(:user) {FactoryGirl.create(:user)}
       let(:non_admin) {FactoryGirl.create(:user)}
       before do
-         before { sign_in non_admin, no_capybara: true }
+         sign_in non_admin, no_capybara: true
       end
 
       describe "submit a DELETE request to the User#destroy action" do
@@ -17,9 +17,20 @@ describe "AuthenticationPages" do
         specify{expect(response).to redirect_to(root_path)}
       end
     end
-    
+
   	describe "for non-signed-in users" do
   		let(:user) {FactoryGirl.create(:user)}
+      describe "in micropost controller" do  
+        describe "submit create request" do 
+        before {post microposts_path}
+        it {expect(response).to redirect_to (signin_path)}
+        end
+
+        describe "submit delete request" do
+          before {delete micropost_path(FactoryGirl.create(:micropost))}
+          it{expect(response).to redirect_to (signin_path)}
+        end
+      end
       describe "visiting user index" do
           before {visit users_path}
 
