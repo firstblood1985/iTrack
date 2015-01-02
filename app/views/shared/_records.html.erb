@@ -1,0 +1,21 @@
+<% if @records.any? %>
+  <table id="records" data-row-stype="rowStyle" class="table table-hover table-striped" >
+  	<thead>
+	<tr>
+		<th>
+		Baseline Name 
+		</th>
+		<th>
+		Date
+		</th>
+		<th>
+		Performance
+		</th>
+		<th>
+		Delete
+		</th>
+	</tr>
+	</thead>
+    <%= render partial: 'shared/record', collection: @records %>
+  </table>
+<% end %>

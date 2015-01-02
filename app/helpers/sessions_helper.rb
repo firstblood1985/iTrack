@@ -23,6 +23,9 @@ module SessionsHelper
 		!current_user.nil?
 	end
 
+	def signed_in_admin?
+		signed_in? && current_user.admin
+	end
 	def sign_out
 		#sign out needs to 
 		#(1) store new token
@@ -47,5 +50,10 @@ module SessionsHelper
     def signed_in_user
       store_location
       redirect_to signin_url, notice: "Please sign in." unless signed_in?
+    end
+
+    def signed_in_admin
+    	store_location
+    	redirect_to signin_url, notice: "Please sign in as admin." unless signed_in_admin?
     end
 end

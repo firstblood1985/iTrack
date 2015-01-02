@@ -1,0 +1,7 @@
+<% provide(:title, 'All Baselines') %>
+<h1>All baselines</h1>
+<ul class="baselines">
+  <% @baselines.each do |baseline| %>
+  	<%= render(baseline) %>
+  <% end %>
+</ul>

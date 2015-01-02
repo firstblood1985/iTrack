@@ -1,0 +1,10 @@
+<tr id="<%= record.id %>">
+  <td><%= link_to record.baseline.name,record.baseline %></td>
+  <td><%= record.perf_date %></td>
+  <td><%= record.perf+record.perf_additional %></td>
+  <td>
+   <% if current_user?(record.user) %>
+  <%= link_to "delete", record, method: :delete,
+                                     data: { confirm: "You sure?" }%>
+  <% end %></td>
+</tr>

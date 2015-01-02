@@ -8,12 +8,42 @@
         <%= render 'shared/user_info' %>
       </section>
       <section>
+        <%= render 'shared/stats' %>
+      </section>
+      <section>
         <%= render 'shared/micropost_form' %>
+      </section>
+      <section id = "user_baseline">
+        <%= render 'user_baselines/user_baseline_input'%>
+      </section>
+      <section id = "basic_info">
+        <%if current_user.basic_info.nil?%>
+          <%= link_to "Create your basic health info", new_basic_info_path, remote:true%>
+        <% else %>
+           <%= render 'shared/basic_info'%>
+        <% end %>
+      </section>  
+      <section id="punch_related">
+        <% if current_user.punched_today?%>
+        <%= render 'shared/unpunch'%>
+        <%else%>
+        <%= render 'shared/punch'%>
+        <% end %>
       </section>
     </aside>
     <div class="span8">
-      <h3>Micropost Feed</h3>
-      <%= render 'shared/feed' %>
+      <section>
+        <h3><%= current_user.name%>'s crossfit records</h3>
+        <%= render 'shared/records'%>
+      </section>
+      <section>
+        <h3>See aggregated history</h3>
+        <%= render 'user_baselines/user_baseline_history'%>
+      </section>
+      <section>
+      <h3><%= current_user.name%>'s Punch History</h3>
+      <%= render 'shared/punch_history' %>
+      </section>
     </div>
   </div>
 <% else %>	

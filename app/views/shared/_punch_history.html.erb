@@ -1,0 +1,172 @@
+<div class="btn-group">
+  <button type="button" class="btn btn-default" onclick="on_week()">Week</button>
+  <button type="button" class="btn btn-default" onclick="on_month()">Month</button>
+  <button type="button" class="btn btn-default" onclick="on_year()">Year</button>
+</div>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<nav id="control" style="display: none;">
+  <ul class="pager">
+    <li onclick="prev()"><a href="#">Previous</a></li>
+    <li onclick="next()"><a href="#">Next</a></li>
+  </ul>
+</nav>
+<script>
+	/*
+	by default render week's view 
+	*/
+    $(document).ready(function(){
+        on_week()
+    });
+    var current_view
+    var View = {
+        WEEK: 0,
+        MONTH: 1,
+        YEAR: 2
+    }
+    var type = "column"
+    var title = "Week History"
+        /*
+        data has to be fetched from backend
+        */
+    var y_text = "Kilometers (km)"
+    var current_week_punch = {
+        current_week: 0,
+        current_dates: new Array(),
+        current_numbers: new Array()
+    }
+    var punch_history  = {
+        interval: 10,
+        start_week: 9,
+        end_week: 0,
+        dates: new Array(),
+        numbers: new Array(),
+
+        get_show_week: function(current_week_punch){
+            var current_week = current_week_punch.current_week
+            if(current_week>=this.end_week && current_week <= this.start_week)
+            {
+                var d = new Date()
+                var start_date = d.setDate(d.getDate()-d.getDay()-current_week*7-1)
+                var end_date = new Date(start_date) 
+                end_date.setDate(end_date.getDate()+6)
+                console.log("start date is " + start_date)
+                console.log("end date is " + end_date)
+                for (var i in this.dates)
+                {
+                    var d = new Date(this.dates[i])
+                    if( d >= start_date && d<= end_date )
+                    {
+                        current_week_punch.current_dates.push(this.dates[i])
+                        current_week_punch.current_numbers.push(this.numbers[i])
+                    }
+                }
+            }else{
+
+            }
+
+        }
+    }
+    function prev()
+    {
+        switch(current_view)
+        {
+            case View.WEEK:
+                if(current_week_punch.current_week<punch_history.start_week && current_week_punch.current_week>= punch_history.end_week )
+                {
+                    current_week_punch.current_week++
+                    
+                }
+            break
+            case View.MONTH:
+            break
+            case View.YEAR:
+            break
+        } 
+    }
+    function next(){
+
+    }
+    function show_control()
+    {
+        $('#control').show()
+    }
+    function fetch_punch_history()
+    {
+        //fetch last year's punch history 
+
+    }
+    function fetch_punch_history_by_monty(){
+
+    }
+    function fetch_punch_history_by_year()
+    {
+
+    }
+    function fetch_punch_hisotry_by_week()
+    {
+
+    }
+    function draw_highcharts(type,title,x_categories,y_text,series)
+    {
+    $('#container').highcharts({
+        chart: {
+            type: type 
+        },
+        title: {
+            text: title,
+            x: -20 //center
+        },
+        xAxis: {
+            categories: x_categories
+        },
+        yAxis: {
+            title: {
+                text: y_text
+            },
+        },
+        series: series
+    });   
+    }
+    function on_month()
+    {
+        current_view = View.MONTH
+    }
+    function on_year()
+    {
+        current_view = View.YEAR
+    }
+    function on_week()
+    {    
+    current_view = View.WEEK
+    punch_history.dates = []
+    punch_history.numbers = []
+    $.ajax({
+        type: 'get',
+        url: '<%=punch_history_week_user_path(current_user)%>',
+        dataType: 'json',
+        data: {start:punch_history.start_week, end:punch_history.end_week},
+        contentType: 'application/json',
+            success: function(data){
+                $.each(data,function(index,value){
+                    punch_history.dates.push(value.punch_date)
+                    punch_history.numbers.push(value.number)
+                })
+                current_week_punch.current_dates = []
+                current_week_punch.current_numbers = []
+                punch_history.get_show_week(current_week_punch)
+                var series = [{
+                    name: 'Run',
+                    data: current_week_punch.current_numbers
+                    }]
+                draw_highcharts(type,title,current_week_punch.current_dates,y_text,series)
+            },
+            error: function(data){
+                alert('get data error')
+            }
+            }
+        )        
+        show_control()
+    }
+
+</script>

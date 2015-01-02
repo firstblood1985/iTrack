@@ -1,0 +1,16 @@
+<p>Input your basic health info</p>
+
+    <%= form_for(@basic_info) do |f| %>
+      <%= render 'shared/error_messages', object:f.object %>
+
+      <%= f.label "Date of Birth" %>
+      <%= f.date_field :date_of_birth %>
+
+      <%= f.label :Height %>
+      <%= f.text_field :height %>
+
+      <%= f.label :Weight %>
+      <%= f.text_field :weight %>
+
+      <%= f.submit "Save", class: "btn btn-large btn-primary" %>
+    <% end %>

@@ -13,3 +13,6 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require custom
+//= require dataTables/jquery.dataTables
+//= require highcharts
+//= require select2

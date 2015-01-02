@@ -20,3 +20,9 @@ def sign_in(user, options={})
     click_button "Sign in"
   end
 end
+
+def sign_in_admin(user,options={})
+    user.admin = true
+    user.save!
+    sign_in(user,options)
+end

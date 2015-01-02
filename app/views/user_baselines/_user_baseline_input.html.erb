@@ -1,0 +1,120 @@
+<div >
+	<h4>select a baseline</h4>
+      <select id="select_baseline" style="width: 200px" onchange="display_baseline_desc(this)">
+      <option/>
+      <% @baselines.each do |baseline|%>
+      <option value=<%= baseline.id%> description="<%= baseline.description%>" b_type=<%=baseline.baseline_type%>><%= baseline.name %></option>
+      <%end%>
+      </select>
+</div>
+<div id= "baseline_show">
+
+</div>
+<div id = "baseline_submit"> 
+	<button class="btn btn-large btn-primary" id="submit" onclick='submit()'>Submit</button>
+</div>
+<script>
+        $(document).ready(function() { $("#select_baseline").select2({
+        	allowClear: true,
+        });
+        $('#baseline_submit').hide();
+        });
+        function submit(){
+        	//alert('submit performance');
+        	//get baseline id 
+        	//get perf data, and perf additional data if there is 
+        	var baseline_id = $('#baseline_show').attr('baseline_id');
+        	var perf_date = $('#perf_date_input').val();
+        	var perf = $('#perf_input').val();
+        	var perf_additional = $('#perf_additional_input').val();
+        		$.ajax({
+			type: 'post',
+			url: '<%=user_baselines_path()%>',
+			dataType: 'script',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				user_baseline: {
+					baseline_id: baseline_id,
+					perf: perf,
+					perf_date: perf_date,
+					perf_additional: perf_additional
+				}
+				}),
+			success: function(){
+			},
+			error: function(){
+			}
+			}
+		)
+	}
+        function display_baseline_desc(){
+        	//alert($("#select_baseline option:selected").attr('description'));
+        	var id = $("#select_baseline option:selected").attr('value');
+        	var desc = $("#select_baseline option:selected").attr('description');
+        	var b_type = $("#select_baseline option:selected").attr('b_type');
+        	var table_for_rep ='<table  id="perf_table" class="table"  >\
+			<thead>\
+			<tr>\
+			<th>\
+			Your performance:  \
+			</th>\
+			</tr>\
+			</thead>\
+			<tr>\
+			<td>Perf Date</td>\
+			<td id="perf_date"><input type ="date" id="perf_date_input"/></td>\
+			</tr>\
+			<tr>\
+			<td>Performance</td>\
+			<td id="perf"><input type="number" id="perf_input"/></td>\
+			</tr>\
+			<tr>\
+			<td>Performance Additional</td>\
+			<td id="perf_additional"><input type="text" id="perf_additional_input"></td>  \
+			</tr>\
+			</table>';
+        	var table_for_time = '<table  id="perf_table" class="table"  >\
+			<thead>\
+			<tr>\
+			<th>\
+			Your performance:  \
+			</th>\
+			</tr>\
+			</thead>\
+			<tr>\
+			<td>Perf Date</td>\
+			<td id="perf_date"><input type ="date" id="perf_date_input"/></td>\
+			</tr>\
+			<tr>\
+			<td>Performance</td>\
+			<td id="perf"><input type="text" id="perf_input" placeholder="00:00"/></td>\
+			</tr>\
+			<tr>\
+			<td>Performance Additional</td>\
+			<td id="perf_additional"><input type="text" id="perf_additional_input"></td>  \
+			</tr>\
+			</table>';
+        	if(id != null && id !== undefined)
+        	{
+        		//display the description
+	        	$('#baseline_show').attr('baseline_id',id);
+        		$('#baseline_show').html('<h4>Description</h4>');
+        		$('#baseline_show').append('<span style="white-space: pre-line">'+desc+'</span>');
+        		//get the type
+        		// if type is rep, then input integer
+        		if(b_type == 'rep')
+        		{
+        		$('#baseline_show').append(table_for_rep);
+        		}
+        		if(b_type == 'time')
+        		{
+        		$('#baseline_show').append(table_for_time);
+        		}
+        		$('#baseline_submit').show();
+        		// if type is time, then input is time
+        	}else{
+        		$('#baseline_show').html('');
+        		$('#baseline_submit').hide();
+        	}
+        }
+</script>

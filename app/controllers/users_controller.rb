@@ -1,5 +1,6 @@
+require 'pp'
 class UsersController < ApplicationController
-  before_action :signed_in_user, only: [:index,:edit, :update] #for authentication
+  before_action :signed_in_user, only: [:index,:edit, :update,:destroy,:following, :followers,:punch_history] #for authentication
   before_action :correct_user, only:[:edit, :update] #for authorization
   before_action :admin_user, only:[:destroy]
   def new
@@ -47,6 +48,58 @@ class UsersController < ApplicationController
       redirect_to users_url
   end
 
+  def following
+    @title = "Following"
+    @user = User.find(params[:id])
+    @users = @user.followed_users.paginate(page: params[:page])
+    render 'show_follow'
+  end
+
+  def followers
+    @title = "Followers"
+    @user = User.find(params[:id])
+    @users = @user.followers.paginate(page: params[:page])
+    render 'show_follow'
+  end
+  def punch_history_week
+    @user = User.find(params[:id])
+    @start = params[:start]
+    @end = params[:end]
+    punch_history = @user.punches.where("punch_date > ? AND punch_date < ?",@start.to_i.week.ago,@end.to_i.week.ago).order(punch_date: :asc).load.map do |p|
+        {punch_date:p.punch_date, number:p.number}
+     end
+
+    respond_to do |format|
+      format.json do
+        render json:  punch_history.to_json
+        end
+    end
+  end
+  def punch_history
+    @user = User.find(params[:id])
+    punch_history = @user.punches.load.map do |p|
+        {punch_date:p.punch_date, number:p.number}
+     end
+
+    respond_to do |format|
+      format.json do
+        render json:  punch_history.to_json
+        end
+    end
+  end
+
+  def user_baselines
+    @user = User.find(params[:id])
+    @baseline_id = params[:baseline_id]
+    user_baseline_history = @user.user_baselines.where("baseline_id = ? ", @baseline_id.to_i).order("perf_date ASC").load.map do |p|
+      {perf_date:p.perf_date, perf:p.perf, perf_additional:p.perf_additional }
+    end
+    respond_to do |format|
+    format.json do
+        render json:  user_baseline_history.to_json
+        end
+    end  
+  end
   private
 
     def user_params

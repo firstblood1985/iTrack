@@ -18,7 +18,77 @@ describe User do
 	it {should respond_to(:feed)}
 	it {should be_valid}
 	it {should_not be_admin}
+	it {should respond_to(:relationships)}
+	it {should respond_to(:followed_users)}
+	it { should respond_to(:following?) }
+  	it { should respond_to(:follow!) }
+  	it { should respond_to(:unfollow!)}
+  	it { should respond_to(:followers)}
+  	it {should respond_to(:basic_info)}
+  	it {should respond_to(:punches)}
+  	it {should respond_to(:punched_today?)}
+  	it {should respond_to(:punch)}
 
+  	describe "punch" do 
+  		let(:user) {FactoryGirl.create(:user)}
+  		it "today punch" do 
+  			user.punch(4.5)
+  			expect(user.today_punch).to eq(4.5)
+  		end		
+  		it "punched_today?" do 
+  			user.punch(1.5)
+  			expect(user.punched_today?).to eq(true) 
+  		end
+
+  		it "should only punch once" do 
+  			user.punch(1.5)
+  			expect {user.punch(1.5)}.to change(user.punches,:count).by(0)
+  		end
+  		it "create a punch" do 
+  			expect do
+            user.punch(1.5)
+          end.to change(user.punches, :count).by(1)
+  		end
+
+  		it "unpunch" do 
+  			user.punch(1.5)
+  			expect {user.un_punch}.to change(user.punches,:count).by(-1)
+  		end
+  	end
+
+  	describe "basic_info association" do 
+  	let(:user) {FactoryGirl.create(:user)}		
+
+
+  	it "should destroy associated basic info" do 
+  		basic_info = user.basic_info
+  		user.delete
+  		expect(basic_info).not_to be_nil
+  		expect(BasicInfo.where(id:basic_info.id)).to be_empty
+  	end 	
+  	end
+  	describe "following" do
+    let(:other_user) { FactoryGirl.create(:user) }
+    before do
+      @user.save
+      @user.follow!(other_user)
+    end
+
+    it { should be_following(other_user) }
+    its(:followed_users) { should include(other_user) }
+
+    describe "unfollow" do
+    	before	{ @user.unfollow!(other_user) }
+    	it {should_not be_following(other_user)}
+    	its(:followed_users) {should_not include(other_user)}
+
+    end
+
+    describe "followers" do
+    	subject {other_user}
+    	its(:followers) {should include(@user)}
+    end
+  end
 
 	describe "microposts association" do
 		before {@user.save}
@@ -44,12 +114,22 @@ describe User do
   		end
   		describe "status" do 
   		let(:unfollowed_post) do
-       		FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
+        FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
       	end
+      	let(:followed_user) { FactoryGirl.create(:user) }
 
+      	before do
+        	@user.follow!(followed_user)
+        	3.times { followed_user.microposts.create!(content: "Lorem ipsum") }
+      	end
       	its(:feed) { should include(newer_micropost) }
       	its(:feed) { should include(older_micropost) }
       	its(:feed) { should_not include(unfollowed_post) }
+      	its(:feed) do
+        followed_user.microposts.each do |micropost|
+          should include(micropost)
+        end
+      	end
   		end
 	end
     describe "with admin attribute set to 'true'" do

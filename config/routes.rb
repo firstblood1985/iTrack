@@ -1,7 +1,16 @@
 ITrack::Application.routes.draw do
-  resources :users 
+  resources :users do
+    member do 
+      get :following, :followers,:punch_history,:punch_history_week,:user_baselines
+    end
+  end
+  resources :user_baselines, only:[:create,:destroy] 
+  resources :baselines, only:[:index,:show,:new,:create,:destroy]
+  resources :punches, only: [:new,:create,:update,:destroy]
+  resources :basic_infos, only: [:new,:create,:update]
   resources :sessions, only: [:new, :create, :destroy]
   resources :microposts, only: [:create, :destroy]
+  resources :relationships, only: [:create, :destroy] #create: post, destroy:delete
  root to:'static_pages#home'
  match '/signup',  to: 'users#new',            via: 'get'
  match '/help',    to: 'static_pages#help',    via: 'get'

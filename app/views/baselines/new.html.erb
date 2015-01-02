@@ -1,0 +1,17 @@
+<h1>Input new baseline info</h1>
+<div class="row">
+    <%= form_for(@baseline) do |f| %>
+      <%= render 'shared/error_messages', object:f.object %>
+
+      <%= f.label "Name" %>
+      <%= f.text_field :name %>
+
+      <%= f.label "Description" %>
+      <%= f.text_area :description %>
+
+      <%= f.label "Baseline type" %>
+      <%= f.select :baseline_type,[['Rep','rep'],['Time','time']] %>
+
+      <%= f.submit "Save", class: "btn btn-large btn-primary" %>
+    <% end %>
+<div>  

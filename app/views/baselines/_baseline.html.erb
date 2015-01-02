@@ -1,0 +1,7 @@
+<ul>
+  <%= link_to baseline.name, baseline %>
+  | <%= link_to 'delete',baseline,method: :delete,data:{confirm:"You Sure?"}%>
+  <span style="white-space: pre-line">
+  <%= baseline.description %>	
+  </span>
+</ul>

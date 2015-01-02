@@ -1,0 +1,100 @@
+<div >
+      <select id="select_my_baseline" style="width: 200px" onchange="show_baseline_history()">
+      <option/>
+      <% current_user.baselines.each do |baseline|%>
+      <option value=<%= baseline.id%> description="<%= baseline.description%>" b_type=<%=baseline.baseline_type%> unit=<%= baseline.unit%>><%= baseline.name %></option>
+      <%end%>
+      </select>
+</div>
+<div id="baseline_history_container" style="min-width: 310px; height: 400px; margin: 0 auto">
+</div>
+
+<script>
+    $(document).ready(function() { $("#select_my_baseline").select2({
+      	allowClear: true,
+    });
+    });
+
+    function show_baseline_history(){
+    var id = $("#select_my_baseline option:selected").attr('value');	
+    var type = "line"
+    var title = $("#select_my_baseline option:selected").text()+ " history" 
+        /*
+        data has to be fetched from backend
+        */
+    var y_text = $("#select_my_baseline option:selected").attr('b_type') +'('+$("#select_my_baseline option:selected").attr('unit')+')'; 
+    var dates = new Array();
+    var perfs = new Array();
+        $.ajax({
+        type: 'get',
+        url: '<%=user_baselines_user_path(current_user)%>',
+        dataType: 'json',
+        data: {baseline_id: id},
+        contentType: 'application/json',
+            success: function(data){
+                $.each(data,function(index,value){
+                    dates.push(value.perf_date);
+                    var perf = parsePerf(value.perf);
+                    perfs.push({name:value.perf_additional, y:perf});
+                })
+                var series = [{
+                    name: $("#select_my_baseline option:selected").text(),
+                    data: perfs
+                    }]
+                draw_baseline_history(type,title,dates,y_text,series)
+            },
+            error: function(data){
+                alert('get data error');
+            }
+            }
+        );   
+
+    }
+    function parsePerf(perf){
+    	 var regex = /\d\d:\d\d/;
+    	 if(perf.match(regex))
+    	 {
+    	 	if(perf.match(/00:/))
+    	 	{
+    	 		var times = perf.split(':');
+    	 		return parseInt(times[1]);
+    	 	}else{
+    	 		var times = perf.split(':');
+    	 		var min = parseInt(times[0]);
+    	 		var sec = parseInt(times[1])/60;
+    	 		return min+sec
+    	 	}
+    	 }else{
+    	 	return parseInt(perf);
+    	 }
+    }
+    function draw_baseline_history(type,title,x_categories,y_text,series)
+    {
+    $('#baseline_history_container').highcharts({
+        chart: {
+            type: type 
+        },
+        title: {
+            text: title,
+            x: -20 //center
+        },
+        xAxis: {
+            categories: x_categories
+        },
+        yAxis: {
+            title: {
+                text: y_text
+            },
+        },
+        series: series,
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: true 
+            }
+        },
+    }); 
+    }
+</script>

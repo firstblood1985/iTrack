@@ -20,6 +20,39 @@ describe "AuthenticationPages" do
 
   	describe "for non-signed-in users" do
   		let(:user) {FactoryGirl.create(:user)}
+
+      describe "in basic info controller" do
+          describe "create basic info" do 
+             before {post basic_infos_path}
+             it {expect(response).to redirect_to (signin_path)}
+          end
+
+          describe "update basic info" do 
+            before {patch basic_info_path(FactoryGirl.create(:basic_info))}
+            it {expect(response).to redirect_to (signin_path)}
+          end 
+      end
+       describe "in the Relationships controller" do
+        describe "submitting to the create action" do
+          before { post relationships_path }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+        describe "submitting to the destroy action" do
+          before { delete relationship_path(1) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+      end
+
+      describe "visit following page" do
+        before { visit following_user_path(user) }
+        it { should have_title('Sign in') }
+      end
+
+      describe "visit follower page" do
+        before { visit followers_user_path(user) }
+        it { should have_title('Sign in') }
+      end
       describe "in micropost controller" do  
         describe "submit create request" do 
         before {post microposts_path}

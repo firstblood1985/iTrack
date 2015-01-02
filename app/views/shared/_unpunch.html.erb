@@ -1,0 +1,28 @@
+<div id='unpunch' >
+   <p stype="float: left;">You Punched <%=current_user.today_punch.number%> km today</p> 
+	<button class="btn btn-default" style="margin-left: 5px"  id="unpunch_button" onclick='unpunch(event)' ajax_path=<%=punch_path(current_user.today_punch)%>>Unpunch</button>
+</div>
+<div id="confirm" class="modal hide fade">
+  <div class="modal-body">
+   Unpunch today's record? 
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary" id="delete">Unpunch</button>
+    <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+  </div>
+</div>
+<script>
+function unpunch(event){
+    event.preventDefault();
+    $('#confirm').modal({ backdrop: 'static', keyboard: true })
+        .one('click', '#delete', function (e) {
+        	$.ajax({
+			type: 'delete',
+			url: $("#unpunch_button").attr('ajax_path'),
+			dataType: 'script',
+			contentType: 'application/json',
+			}
+		)
+        });
+}
+</script>

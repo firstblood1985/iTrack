@@ -1,0 +1,32 @@
+<div id='punch'>
+	<input id ='punch_input'  style="float: left;width: 200px;" type="number" placeholder="Punch Your Ks">  
+	<button class="btn btn-default" style="margin-left: 5px"  id="punch_button" onclick='punch()' ajax_path=<%=punches_path%>>Punch </button>
+</div>
+<script>
+	function punch(){
+/**
+	get input punch number
+	submit to controller (what's the url)
+*/
+	var number = $('#punch_input').val()
+	var d = new Date()
+	var today = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()
+	$.ajax({
+			type: 'post',
+			url: $("#punch_button").attr('ajax_path'),
+			dataType: 'script',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				punch: {
+					number: number,
+					punch_date: today,
+				}
+				}),
+			success: function(){
+			},
+			error: function(){
+			}
+			}
+		)
+	}
+</script>

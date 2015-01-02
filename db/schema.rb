@@ -11,7 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141005060855) do
+ActiveRecord::Schema.define(version: 20141230064858) do
+
+  create_table "baselines", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "baseline_type"
+    t.string   "unit"
+  end
+
+  create_table "basic_infos", force: true do |t|
+    t.integer  "user_id"
+    t.date     "date_of_birth"
+    t.integer  "height"
+    t.integer  "weight"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "basic_infos", ["user_id"], name: "index_basic_infos_on_user_id"
 
   create_table "microposts", force: true do |t|
     t.string   "content"
@@ -21,6 +41,46 @@ ActiveRecord::Schema.define(version: 20141005060855) do
   end
 
   add_index "microposts", ["user_id", "created_at"], name: "index_microposts_on_user_id_and_created_at"
+
+  create_table "performances", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "wod_id"
+    t.string   "performance"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "punches", force: true do |t|
+    t.integer  "user_id"
+    t.date     "punch_date"
+    t.float    "number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "relationships", force: true do |t|
+    t.integer  "follower_id"
+    t.integer  "followed_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "relationships", ["followed_id"], name: "index_relationships_on_followed_id"
+  add_index "relationships", ["follower_id", "followed_id"], name: "index_relationships_on_follower_id_and_followed_id", unique: true
+  add_index "relationships", ["follower_id"], name: "index_relationships_on_follower_id"
+
+  create_table "user_baselines", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "baseline_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "perf"
+    t.date     "perf_date"
+    t.string   "perf_additional"
+  end
+
+  add_index "user_baselines", ["baseline_id"], name: "index_user_baselines_on_baseline_id"
+  add_index "user_baselines", ["user_id"], name: "index_user_baselines_on_user_id"
 
   create_table "users", force: true do |t|
     t.string   "name"
@@ -34,5 +94,12 @@ ActiveRecord::Schema.define(version: 20141005060855) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["remember_token"], name: "index_users_on_remember_token"
+
+  create_table "wods", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

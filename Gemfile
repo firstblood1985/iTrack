@@ -11,10 +11,13 @@ group :development, :test do
 end
 
 group :test do
-  gem 'selenium-webdriver', '2.35.1'
+  gem "selenium-webdriver", "~> 2.43.0"
   gem 'capybara', '2.1.0'
   gem 'factory_girl_rails'
+  gem 'database_cleaner'
 end
+#to validate date, time, etc
+gem 'validates_timeliness', '~> 3.0'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.2'
@@ -30,13 +33,16 @@ gem 'coffee-rails', '~> 4.0.0'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '2.2.1'
+gem 'jquery-datatables-rails','~> 2.2.3'
+gem 'highcharts-rails', '~> 4.0.1'
+gem "select2-rails"
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
-
+gem 'json'
 gem 'faker','1.1.2'
 gem 'will_paginate', '3.0.4'
 gem 'bootstrap-will_paginate', '0.0.9'

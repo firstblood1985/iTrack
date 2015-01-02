@@ -1,0 +1,51 @@
+rails generate model BasicInfo user_id:integer date_of_birth:date height:integer weight:integer 
+--------------------
+leverage validates_timeliness to validate date_of_birth (https://github.com/adzap/validates_timeliness/)
+gem 'validates_timeliness', '~> 3.0'
+bundle install
+rails generate validates_timeliness:install
+---------------------
+procedures:
+1. generate model
+2. write model test case 
+3. implement model
+4. write authentication test case 
+5. implement controller
+6. write page request test case 
+7. implement view, including html, css, js
+----------------------------
+----------------------------
+baseline:
+1. admin can get into baseline create page
+2. admin can create baseline 
+3. admin can update baseline
+4. admin can delete baseline
+----------------------------
+
+rails generate model Punch user_id:integer punch_date:date number:float 
+bundle exec rake db:migrate
+bundle exec rake test:prepare
+
+rails generate model wod name:string description:text
+
+rails generate model Performance user_id:integer wod_id:integer performance:string
+
+rails generate model Baseline name:string description:text
+
+rails generate model UserBaseline user_id:integer baseline_id:integer
+
+rails generate migration add_type_to_baselines type:string
+
+rails generate migration add_perf_to_user_baselines perf:integer
+
+rails generate migration add_date_to_user_baselines perf_date:date
+
+rails generate migration fixColumnName 
+
+rails g migration change_data_type_for_user_baselines_perf
+
+rails g migration add_column_perf_additional_to_user_baselines
+
+rails g migration remove_unique_index_on_user_baselines
+
+rails g migration add_column_unit_to_baseline

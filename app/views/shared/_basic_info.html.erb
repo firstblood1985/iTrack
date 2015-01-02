@@ -1,0 +1,112 @@
+<table  id="basic_info_form" class="table table-hover"  data-toolbar="#update_button">
+	<thead>
+	<tr>
+		<th>
+		My Basic info: 
+		</th>
+	</tr>
+	</thead>
+	<tr>
+		<td>Date of Birth</td>
+		<td id="date_of_birth"><%= @basic_info.date_of_birth%></td>
+	</tr>
+	<tr>
+		<td>Height(cm)</td>
+		<td id="height"><%= @basic_info.height%></td>
+	</tr>
+	<tr>
+		<td>Weight(kg)</td>
+		<td id="weight"><%= @basic_info.weight%></td>
+	</tr>
+	<tr>
+		<td>BMI</td>
+		<td id="bmi"><%= @bmi%></td>
+	</tr>
+</table>
+<div id="work" ajax_path=<%= basic_info_path(@basic_info)%>>
+	<button class="btn btn-large btn-primary" id="update" onclick='update()' >Update</button>
+</div>
+<script>
+	var date_of_birth; 
+	var height;
+	var weight;
+	var update_button = '<button class="btn btn-large btn-primary" id="update" onclick="update()" >Update</button>'
+	var save_cancel_buttons = '<button class="btn btn-large btn-primary" type="button" id ="save" onclick="save()">Save</button>   <button class="btn btn-large" type="button" id="cancel" onclick="cancel()">Cancel</button>'
+
+	function update(){
+		/*var update = document.getElementById("update");
+		update.id = 'save';
+		update.textContent = "Save";
+		update.onclick = save;
+		*/	
+/*
+	difference between val() and text()
+	.val() works on input elements (or any element with a value attribute?) and .text() will not work on input elements.  .val() gets the value of the input element -- regardless of type. .text() gets the innerText (not HTML) of all the matched elements:
+
+.text()
+
+The result is a string that contains the combined text contents of all matched elements. This method works on both HTML and XML documents. Cannot be used on input elements. For input field text use the val attribute.
+
+.val()
+
+Get the content of the value attribute of the first matched element
+*/
+		//keep the original value
+		date_of_birth = $('#date_of_birth').text()
+		var input_date_of_birth = "<input type='date' id='date_of_birth_input' value="+date_of_birth+ " />"
+		$('#date_of_birth').html(input_date_of_birth)
+
+		height = $('#height').text()
+		var input_height ="<input type='text' id='height_input' value="+height+ "></input>" 
+		$('#height').html(input_height)
+
+		weight = $('#weight').text()
+		var input_weight = "<input type='text' id='weight_input' value="+weight+ "></input>"
+		$('#weight').html(input_weight)
+ 		$('#work').html(save_cancel_buttons) 
+	}
+	function reset(){
+	$('#date_of_birth').html(date_of_birth)
+	$('#height').html(height)
+	$('#weight').html(weight)
+	$('#work').html(update_button)
+	}
+	function cancel(){
+	reset()
+	}
+	function save(){
+	/*
+	get value from input
+	validate value
+	ajax call
+	*/
+	var date_of_birth_input = $('#date_of_birth_input').val()
+	var height_input = $('#height_input').val()
+	var weight_input = $('#weight_input').val()
+	$.ajax({
+			type: 'patch',
+			url: $("#work").attr('ajax_path'),
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				basic_info: {
+					date_of_birth: date_of_birth_input,
+					weight: weight_input,
+					height: height_input
+
+				}
+				}),
+			success: function(data){
+			$('#date_of_birth').html(data.date_of_birth)
+			$('#height').html(data.height)
+			$('#weight').html(data.weight)
+			$('#bmi').html(data.bmi)
+			$('#work').html(update_button)
+			},
+			error: function(data,event,status,xhr){
+				alert('update error')
+			}
+			}
+		)
+	}
+</script>
